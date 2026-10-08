@@ -32,6 +32,11 @@
             mix-blend-mode: normal;
             opacity: 1;
         }
+        select option {
+            background-color: #0f172a;
+            color: #f1f5f9;
+            padding: 8px;
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-48 font-sans">
@@ -104,10 +109,20 @@
 
         <!-- Checkout Form Section -->
         <section class="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-4 shadow-sm">
-            <h2 class="text-lg font-semibold text-slate-200">Delivery Information</h2>
+            <h2 class="text-lg font-semibold text-slate-200">Customer & Order Details</h2>
             
             <form id="orderForm" class="space-y-3">
                 <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
+                    <input type="text" id="custName" required placeholder="Enter your full name" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Phone Number</label>
+                    <input type="tel" id="custPhone" required placeholder="e.g. 012-3456789" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Delivery Type</label>
                     <select id="custFulfillment" required 
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
@@ -116,20 +131,57 @@
                         <option value="Door Delivery">Door Delivery</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Phone Number</label>
-                    <input type="tel" id="custPhone" required placeholder="e.g. 012-3456789" 
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
+
+                <!-- Custom Interactive Payment Option Selector with Images -->
+                <div class="relative">
                     <label class="block text-xs font-medium text-slate-300 mb-1">Payment Option</label>
-                    <select id="custPayment" required 
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-                        <option value="" disabled selected>Select payment option</option>
-                        <option value="Online Banking / DuitNow">Online Banking / DuitNow</option>
-                        <option value="Cash on Delivery / Pickup">Cash on Delivery / Pickup</option>
-                        <option value="Touch 'n Go eWallet">Touch 'n Go eWallet</option>
-                    </select>
+                    <input type="hidden" id="custPayment" required>
+                    
+                    <!-- Dropdown Trigger Button -->
+                    <div id="paymentDropdownBtn" onclick="togglePaymentDropdown()" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 flex items-center justify-between cursor-pointer hover:border-emerald-500 transition">
+                        <span id="selectedPaymentText">Select payment option</span>
+                        <span class="text-xs">▼</span>
+                    </div>
+
+                    <!-- Dropdown Options List Box -->
+                    <div id="paymentDropdownList" class="hidden absolute left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 max-h-60 overflow-y-auto divide-y divide-slate-800">
+                        
+                        <!-- Header: Online Banking -->
+                        <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-400 bg-slate-950 uppercase tracking-wider">Online Banking / DuitNow</div>
+                        
+                        <div onclick="selectPayment('Maybank2u', 'Maybank (Online Banking / DuitNow)', 'maybank.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="maybank.png" alt="Maybank" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">Maybank2u</span>
+                        </div>
+                        <div onclick="selectPayment('CIMB Clicks', 'CIMB Bank (Online Banking / DuitNow)', 'cimb.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="cimb.png" alt="CIMB" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">CIMB Clicks</span>
+                        </div>
+                        <div onclick="selectPayment('Public Bank (PBe)', 'Public Bank (Online Banking / DuitNow)', 'publicbank.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="publicbank.png" alt="Public Bank" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">Public Bank (PBe)</span>
+                        </div>
+                        <div onclick="selectPayment('RHB Now', 'RHB Bank (Online Banking / DuitNow)', 'rhb.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="rhb.png" alt="RHB" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">RHB Now</span>
+                        </div>
+                        <div onclick="selectPayment('Hong Leong Connect', 'Hong Leong Bank (Online Banking / DuitNow)', 'hongleong.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="hongleong.png" alt="Hong Leong" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">Hong Leong Connect</span>
+                        </div>
+
+                        <!-- Header: E-Wallet -->
+                        <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-400 bg-slate-950 uppercase tracking-wider">E-Wallet</div>
+                        <div onclick="selectPayment('Touch \'n Go eWallet', 'Touch \'n Go eWallet', 'tng.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="tng.png" alt="TnG eWallet" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">Touch 'n Go eWallet</span>
+                        </div>
+                        <div onclick="selectPayment('DuitNow', 'DuitNow', 'duitnow.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="duitnow.png" alt="DuitNow" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                            <span class="text-sm text-white">DuitNow</span>
+                        </div>
+                    </div>
                 </div>
             </form>
         </section>
@@ -148,6 +200,7 @@
         </div>
     </div>
 
+    <!-- Product Detail Modal -->
     <div id="productModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeProductModal()">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 relative space-y-4 shadow-2xl" onclick="event.stopPropagation()">
             <button onclick="closeProductModal()" class="sticky top-0 float-right text-slate-400 hover:text-white bg-slate-700/80 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold transition z-10">✕</button>
@@ -157,6 +210,7 @@
             </div>
         </div>
     </div>
+
     <!-- Order Confirmation Modal -->
     <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
@@ -206,12 +260,41 @@
             document.getElementById('totalPrice').innerText = `RM${total.toFixed(2)}`;
         }
 
+        // Custom Dropdown Toggle & Selection Logic
+        function togglePaymentDropdown() {
+            const list = document.getElementById('paymentDropdownList');
+            list.classList.toggle('hidden');
+        }
+
+        function selectPayment(displayName, formValue, imgSrc) {
+            const btnText = document.getElementById('selectedPaymentText');
+            const hiddenInput = document.getElementById('custPayment');
+            
+            if (imgSrc) {
+                btnText.innerHTML = `<span class="flex items-center space-x-2"><img src="${imgSrc}" class="w-5 h-5 object-contain rounded bg-white p-0.5"><span class="text-white">${displayName}</span></span>`;
+            } else {
+                btnText.innerHTML = `<span class="text-white">${displayName}</span>`;
+            }
+            
+            hiddenInput.value = formValue;
+            document.getElementById('paymentDropdownList').classList.add('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('paymentDropdownList');
+            const btn = document.getElementById('paymentDropdownBtn');
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
         function openProductModal(productId) {
             const prod = products[productId];
             const modalContent = document.getElementById('modalContent');
             
             modalContent.innerHTML = `
-                <div class="bg-slate-950 rounded-xl p-3 flex items-center justify-center h-52 border border-slate-700 overflow-hidden">
+                <div class="bg-slate-950 rounded-xl p-3 flex items-center justify-center h-48 border border-slate-700 overflow-hidden">
                     <img src="${prod.imgSrc}" alt="${prod.name}" class="product-image">
                 </div>
                 <div class="flex justify-between items-start">
@@ -245,7 +328,9 @@
         function triggerCheckout() {
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
-            const address = document.getElementById('custAddress').value.trim();
+            const fulfillment = document.getElementById('custFulfillment').value;
+            const payment = document.getElementById('custPayment').value;
+
             let totalItems = 0, totalPrice = 0, summaryList = [];
             for (const id in cart) {
                 if (cart[id] > 0) {
@@ -256,8 +341,10 @@
                 }
             }
             if (totalItems === 0) { alert('Please select at least one shuttlecock.'); return; }
-            if (!name || !phone || !address) { document.getElementById('orderForm').reportValidity(); return; }
-            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br>Items:<br>${summaryList.join('<br>')}<br><br>We will ship to: <em>${address}</em>.`;
+            if (!name || !phone || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
+            
+            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Delivery Type:</strong> ${fulfillment}<br><strong>Payment Option:</strong> ${payment}`;
+            
             document.getElementById('successMessage').innerHTML = successMsg;
             document.getElementById('successModal').classList.remove('hidden');
         }
@@ -269,6 +356,10 @@
             document.getElementById('qty-P02').innerText = '0';
             calculateTotal();
             document.getElementById('orderForm').reset();
+            const selectedPaymentText = document.getElementById('selectedPaymentText');
+            selectedPaymentText.innerText = 'Select payment option';
+            selectedPaymentText.className = 'text-slate-400';
+            document.getElementById('custPayment').value = '';
         }
     </script>
 </body>
