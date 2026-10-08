@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shuttle Pro - Badminton Shuttlecock Ordering</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="styling.css">
+    <!-- Google Fonts Inter -->
+    <link href="styling2.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .hero-pattern {
+            background-color: #1e293b;
+            background-image: radial-gradient(#334155 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        /* Ensures images fit nicely within the card containers */
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Keeps aspect ratio, doesn't stretch */
+            mix-blend-mode: luminosity; /* Optional: gives them a cool monochrome look matching the theme */
+            opacity: 0.8;
+        }
+        .product-image:hover {
+            mix-blend-mode: normal;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🏸</span>
+                <h1 class="text-xl font-bold tracking-wide text-emerald-400">Shuttle Store</h1>
+            </div>
+            <div class="text-sm bg-slate-700 px-3 py-1.5 rounded-full text-slate-300 font-medium">
+                Tawau, Malaysia
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Product Catalog Section -->
+        <section>
+            <h2 class="text-lg font-semibold mb-3 text-slate-200">Our Products <span class="text-xs text-slate-400 font-normal">(Tap card for details)</span></h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Product 1 -->
+                <div onclick="openProductModal('P01')" class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between cursor-pointer hover:border-emerald-500 transition shadow-sm active:scale-[0.99]">
+                    <div>
+                        <div class="bg-slate-950 rounded-lg p-3 flex items-center justify-center h-40 mb-3 border border-slate-700 overflow-hidden">
+                            <img src="shuttlecock.png" alt="Shuttlecock Pro Standard" class="product-image">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-base text-white">Shuttlecock Pro Standard</h3>
+                            <span class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P01</span>
+                        </div>
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">High durability feather shuttlecock designed for intensive club training and tournament play.</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 mt-auto">
+                        <span class="text-emerald-400 font-bold text-lg">RM12.00</span>
+                        <div onclick="event.stopPropagation()" class="flex items-center space-x-2 bg-slate-900 rounded-lg p-1 border border-slate-700">
+                            <button onclick="updateQty('P01', -1)" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
+                            <span id="qty-P01" class="w-6 text-center text-sm font-semibold">0</span>
+                            <button onclick="updateQty('P01', 1)" class="w-7 h-7 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2: P02 -->
+                <div onclick="openProductModal('P02')" class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between cursor-pointer hover:border-emerald-500 transition shadow-sm active:scale-[0.99]">
+                    <div>
+                        <div class="bg-slate-950 rounded-lg p-3 flex items-center justify-center h-40 mb-3 border border-slate-700 overflow-hidden">
+                            <img src="rsl_classic.png" alt="RSL Classic Tournament" class="product-image">
+                        </div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-base text-white">RSL Classic Tournament</h3>
+                            <span class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P02</span>
+                        </div>
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">Grade A premium goose feathers offering exceptional flight stability and professional feel.</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 mt-auto">
+                        <span class="text-emerald-400 font-bold text-lg">RM150.00</span>
+                        <div onclick="event.stopPropagation()" class="flex items-center space-x-2 bg-slate-900 rounded-lg p-1 border border-slate-700">
+                            <button onclick="updateQty('P02', -1)" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
+                            <span id="qty-P02" class="w-6 text-center text-sm font-semibold">0</span>
+                            <button onclick="updateQty('P02', 1)" class="w-7 h-7 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checkout Form Section -->
+        <section class="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-4 shadow-sm">
+            <h2 class="text-lg font-semibold text-slate-200">Delivery Information</h2>
+            
+            <form id="orderForm" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
+                    <input type="text" id="custName" required placeholder="Enter your full name" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Phone Number</label>
+                    <input type="tel" id="custPhone" required placeholder="e.g. 012-3456789" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Delivery Address</label>
+                    <textarea id="custAddress" required rows="2" placeholder="Street address, apartment, or hostel room" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Sticky Bottom Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur border-t border-slate-700 p-4 z-20">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div>
+                <p class="text-xs text-slate-400">Total Amount</p>
+                <p id="totalPrice" class="text-xl font-bold text-emerald-400">RM0.00</p>
+            </div>
+            <button onclick="triggerCheckout()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl text-sm transition shadow-lg active:scale-95">
+                Place Order
+            </button>
+        </div>
+    </div>
+
+    <div id="productModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeProductModal()">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 relative space-y-4 shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeProductModal()" class="sticky top-0 float-right text-slate-400 hover:text-white bg-slate-700/80 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold transition z-10">✕</button>
+            
+            <div id="modalContent" class="space-y-4 clear-both">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+    <!-- Order Confirmation Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 bg-emerald-900/60 border border-emerald-500 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">✓</div>
+            <h3 class="text-xl font-bold text-white">Order Successful!</h3>
+            <p id="successMessage" class="text-sm text-slate-300 leading-relaxed"></p>
+            <button onclick="closeSuccessModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl text-sm transition">
+                Done
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const products = {
+            'P01': {
+                id: 'P01',
+                name: 'Shuttlecock Pro Standard',
+                price: 12.00,
+                imgSrc: 'shuttlecock.png',
+                desc: 'High durability feather shuttlecock designed for intensive club training and tournament play. Made with selected duck feathers for consistent flight trajectory and enhanced durability.',
+                specs: ['Material: Premium Duck Feather', 'Flight Stability: A+', 'Durability: High', 'Suitable for: Club training & friendly matches']
+            },
+            'P02': {
+                id: 'P02',
+                name: 'RSL Classic Tournament',
+                price: 150.00,
+                imgSrc: 'rsl_classic.png',
+                desc: 'Grade A premium goose feathers offering exceptional flight stability and professional tournament feel. Trusted by club players and tournament organizers across Malaysia.',
+                specs: ['Material: Selected Goose Feather', 'Flight Stability: S-Grade', 'Durability: Professional Standard', 'Suitable for: Competitive tournaments & advanced play']
+            }
+        };
+
+        const cart = { 'P01': 0, 'P02': 0 };
+
+        function updateQty(productId, change) {
+            cart[productId] = Math.max(0, cart[productId] + change);
+            document.getElementById(`qty-${productId}`).innerText = cart[productId];
+            const modalQty = document.getElementById(`modal-qty-${productId}`);
+            if (modalQty) modalQty.innerText = cart[productId];
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            for (const id in cart) total += cart[id] * products[id].price;
+            document.getElementById('totalPrice').innerText = `RM${total.toFixed(2)}`;
+        }
+
+        function openProductModal(productId) {
+            const prod = products[productId];
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="bg-slate-950 rounded-xl p-3 flex items-center justify-center h-52 border border-slate-700 overflow-hidden">
+                    <img src="${prod.imgSrc}" alt="${prod.name}" class="product-image">
+                </div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">${prod.id}</span>
+                        <h3 class="text-xl font-bold text-white mt-1">${prod.name}</h3>
+                    </div>
+                    <span class="text-emerald-400 font-bold text-xl">RM${prod.price.toFixed(2)}</span>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed">${prod.desc}</p>
+                <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-700/50 space-y-1">
+                    <p class="text-xs font-semibold text-slate-400 mb-1">Specifications:</p>
+                    ${prod.specs.map(spec => `<p class="text-xs text-slate-300 flex items-center"><span class="text-emerald-400 mr-2">•</span>${spec}</p>`).join('')}
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                    <span class="text-sm font-medium text-slate-300">Quantity:</span>
+                    <div class="flex items-center space-x-3 bg-slate-900 rounded-lg p-1.5 border border-slate-700">
+                        <button onclick="updateQty('${prod.id}', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
+                        <span id="modal-qty-${prod.id}" class="w-8 text-center text-base font-semibold">${cart[prod.id]}</span>
+                        <button onclick="updateQty('${prod.id}', 1)" class="w-8 h-8 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function triggerCheckout() {
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+            let totalItems = 0, totalPrice = 0, summaryList = [];
+            for (const id in cart) {
+                if (cart[id] > 0) {
+                    totalItems += cart[id];
+                    let itemTotal = cart[id] * products[id].price;
+                    totalPrice += itemTotal;
+                    summaryList.push(`${cart[id]}x ${products[id].name} (RM${itemTotal.toFixed(2)})`);
+                }
+            }
+            if (totalItems === 0) { alert('Please select at least one shuttlecock.'); return; }
+            if (!name || !phone || !address) { document.getElementById('orderForm').reportValidity(); return; }
+            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br>Items:<br>${summaryList.join('<br>')}<br><br>We will ship to: <em>${address}</em>.`;
+            document.getElementById('successMessage').innerHTML = successMsg;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            cart['P01'] = 0; cart['P02'] = 0;
+            document.getElementById('qty-P01').innerText = '0';
+            document.getElementById('qty-P02').innerText = '0';
+            calculateTotal();
+            document.getElementById('orderForm').reset();
+        }
+    </script>
+</body>
+</html>
