@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,27 +12,36 @@
     <!-- Google Fonts Inter -->
     <link href="styling2.css" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
         .custom-gradient {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
+
         .hero-pattern {
             background-color: #1e293b;
             background-image: radial-gradient(#334155 1px, transparent 1px);
             background-size: 24px 24px;
         }
+
         /* Ensures images fit nicely within the card containers */
         .product-image {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Keeps aspect ratio, doesn't stretch */
-            mix-blend-mode: luminosity; /* Optional: gives them a cool monochrome look matching the theme */
+            object-fit: contain;
+            /* Keeps aspect ratio, doesn't stretch */
+            mix-blend-mode: luminosity;
+            /* Optional: gives them a cool monochrome look matching the theme */
             opacity: 0.8;
         }
+
         .product-image:hover {
             mix-blend-mode: normal;
             opacity: 1;
         }
+
         select option {
             background-color: #0f172a;
             color: #f1f5f9;
@@ -39,16 +49,25 @@
         }
     </style>
 </head>
+
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-48 font-sans">
-<!-- Header -->
+    <!-- Header -->
     <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
         <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <span class="text-2xl">🏸</span>
                 <h1 class="text-xl font-bold tracking-wide text-emerald-400">Shuttle Store</h1>
             </div>
-            <div class="text-sm bg-slate-700 px-3 py-1.5 rounded-full text-slate-300 font-medium">
-                Sabah
+            <div class="flex items-center space-x-2">
+                <!-- View Orders Button -->
+                <a href="orders.html"
+                    class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full text-slate-200 font-medium transition flex items-center space-x-1.5">
+                    <span>📋</span>
+                    <span>View Orders</span>
+                </a>
+                <div class="text-sm bg-slate-700 px-3 py-1.5 rounded-full text-slate-300 font-medium">
+                    Sabah
+                </div>
             </div>
         </div>
     </header>
@@ -58,49 +77,64 @@
 
         <!-- Product Catalog Section -->
         <section>
-            <h2 class="text-lg font-semibold mb-3 text-slate-200">Our Products <span class="text-xs text-slate-400 font-normal">(Tap card for details)</span></h2>
-            
+            <h2 class="text-lg font-semibold mb-3 text-slate-200">Our Products <span
+                    class="text-xs text-slate-400 font-normal">(Tap card for details)</span></h2>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <!-- Product 1 -->
-                <div onclick="openProductModal('P01')" class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between cursor-pointer hover:border-emerald-500 transition shadow-sm active:scale-[0.99]">
+                <div onclick="openProductModal('P01')"
+                    class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between cursor-pointer hover:border-emerald-500 transition shadow-sm active:scale-[0.99]">
                     <div>
-                        <div class="bg-slate-950 rounded-lg p-3 flex items-center justify-center h-40 mb-3 border border-slate-700 overflow-hidden">
+                        <div
+                            class="bg-slate-950 rounded-lg p-3 flex items-center justify-center h-40 mb-3 border border-slate-700 overflow-hidden">
                             <img src="image/shuttlecock.png" alt="Shuttlecock Pro Standard" class="product-image">
                         </div>
                         <div class="flex justify-between items-start mb-1">
                             <h3 class="font-bold text-base text-white">Shuttlecock Pro Standard</h3>
-                            <span class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P01</span>
+                            <span
+                                class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P01</span>
                         </div>
-                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">High durability feather shuttlecock designed for intensive club training and tournament play.</p>
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">High durability feather shuttlecock designed
+                            for intensive club training and tournament play.</p>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 mt-auto">
                         <span class="text-emerald-400 font-bold text-lg">RM12.00</span>
-                        <div onclick="event.stopPropagation()" class="flex items-center space-x-2 bg-slate-900 rounded-lg p-1 border border-slate-700">
-                            <button onclick="updateQty('P01', -1)" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
+                        <div onclick="event.stopPropagation()"
+                            class="flex items-center space-x-2 bg-slate-900 rounded-lg p-1 border border-slate-700">
+                            <button onclick="updateQty('P01', -1)"
+                                class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
                             <span id="qty-P01" class="w-6 text-center text-sm font-semibold">0</span>
-                            <button onclick="updateQty('P01', 1)" class="w-7 h-7 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
+                            <button onclick="updateQty('P01', 1)"
+                                class="w-7 h-7 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Product 2: P02 -->
-                <div onclick="openProductModal('P02')" class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between cursor-pointer hover:border-emerald-500 transition shadow-sm active:scale-[0.99]">
+                <div onclick="openProductModal('P02')"
+                    class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col justify-between cursor-pointer hover:border-emerald-500 transition shadow-sm active:scale-[0.99]">
                     <div>
-                        <div class="bg-slate-950 rounded-lg p-3 flex items-center justify-center h-40 mb-3 border border-slate-700 overflow-hidden">
+                        <div
+                            class="bg-slate-950 rounded-lg p-3 flex items-center justify-center h-40 mb-3 border border-slate-700 overflow-hidden">
                             <img src="image/rsl_classic.png" alt="RSL Classic Tournament" class="product-image">
                         </div>
                         <div class="flex justify-between items-start mb-1">
                             <h3 class="font-bold text-base text-white">RSL Classic Tournament</h3>
-                            <span class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P02</span>
+                            <span
+                                class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P02</span>
                         </div>
-                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">Grade A premium goose feathers offering exceptional flight stability and professional feel.</p>
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">Grade A premium goose feathers offering
+                            exceptional flight stability and professional feel.</p>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 mt-auto">
                         <span class="text-emerald-400 font-bold text-lg">RM150.00</span>
-                        <div onclick="event.stopPropagation()" class="flex items-center space-x-2 bg-slate-900 rounded-lg p-1 border border-slate-700">
-                            <button onclick="updateQty('P02', -1)" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
+                        <div onclick="event.stopPropagation()"
+                            class="flex items-center space-x-2 bg-slate-900 rounded-lg p-1 border border-slate-700">
+                            <button onclick="updateQty('P02', -1)"
+                                class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold transition">-</button>
                             <span id="qty-P02" class="w-6 text-center text-sm font-semibold">0</span>
-                            <button onclick="updateQty('P02', 1)" class="w-7 h-7 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
+                            <button onclick="updateQty('P02', 1)"
+                                class="w-7 h-7 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold transition">+</button>
                         </div>
                     </div>
                 </div>
@@ -110,21 +144,26 @@
         <!-- Checkout Form Section -->
         <section class="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-4 shadow-sm">
             <h2 class="text-lg font-semibold text-slate-200">Customer & Order Details</h2>
-            
+
             <form id="orderForm" class="space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
-                    <input type="text" id="custName" required placeholder="Enter your full name" 
+                    <input type="text" id="custName" required placeholder="Enter your full name"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Phone Number</label>
-                    <input type="tel" id="custPhone" required placeholder="e.g. 012-3456789" 
+                    <input type="tel" id="custPhone" required placeholder="e.g. 012-3456789"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 </div>
-                 <div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Referral Code</label>
+                    <input type="text" id="refCode" required placeholder="e.g. JohnDoe"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Delivery Type</label>
-                    <select id="custFulfillment" required 
+                    <select id="custFulfillment" required
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                         <option value="" disabled selected>Select delivery type</option>
                         <option value="Dropoff Point">Dropoff Point</option>
@@ -136,49 +175,73 @@
                 <div class="relative">
                     <label class="block text-xs font-medium text-slate-300 mb-1">Payment Option</label>
                     <input type="hidden" id="custPayment" required>
-                    
+
                     <!-- Dropdown Trigger Button -->
-                    <div id="paymentDropdownBtn" onclick="togglePaymentDropdown()" 
+                    <div id="paymentDropdownBtn" onclick="togglePaymentDropdown()"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 flex items-center justify-between cursor-pointer hover:border-emerald-500 transition">
                         <span id="selectedPaymentText">Select payment option</span>
                         <span class="text-xs">▼</span>
                     </div>
 
                     <!-- Dropdown Options List Box -->
-                    <div id="paymentDropdownList" class="hidden absolute left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 max-h-60 overflow-y-auto divide-y divide-slate-800">
-                        
+                    <div id="paymentDropdownList"
+                        class="hidden absolute left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 max-h-60 overflow-y-auto divide-y divide-slate-800">
+
                         <!-- Header: Online Banking -->
-                        <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-400 bg-slate-950 uppercase tracking-wider">Online Banking / DuitNow</div>
-                        
-                        <div onclick="selectPayment('Maybank2u', 'Maybank (Online Banking / DuitNow)', 'maybank.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/maybank.png" alt="Maybank" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div
+                            class="px-3 py-1.5 text-[11px] font-semibold text-slate-400 bg-slate-950 uppercase tracking-wider">
+                            Online Banking / DuitNow</div>
+
+                        <div onclick="selectPayment('Maybank2u', 'Maybank (Online Banking / DuitNow)', 'maybank.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/maybank.png" alt="Maybank"
+                                class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">Maybank2u</span>
                         </div>
-                        <div onclick="selectPayment('CIMB Clicks', 'CIMB Bank (Online Banking / DuitNow)', 'cimb.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/cimb.png" alt="CIMB" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div onclick="selectPayment('CIMB Clicks', 'CIMB Bank (Online Banking / DuitNow)', 'cimb.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/cimb.png" alt="CIMB" class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">CIMB Clicks</span>
                         </div>
-                        <div onclick="selectPayment('Public Bank (PBe)', 'Public Bank (Online Banking / DuitNow)', 'publicbank.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/publicbank.png" alt="Public Bank" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div onclick="selectPayment('Public Bank (PBe)', 'Public Bank (Online Banking / DuitNow)', 'publicbank.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/publicbank.png" alt="Public Bank"
+                                class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">Public Bank (PBe)</span>
                         </div>
-                        <div onclick="selectPayment('RHB Now', 'RHB Bank (Online Banking / DuitNow)', 'rhb.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/rhb.png" alt="RHB" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div onclick="selectPayment('RHB Now', 'RHB Bank (Online Banking / DuitNow)', 'rhb.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/rhb.png" alt="RHB" class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">RHB Now</span>
                         </div>
-                        <div onclick="selectPayment('Hong Leong Connect', 'Hong Leong Bank (Online Banking / DuitNow)', 'hongleong.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/hongleong.png" alt="Hong Leong" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div onclick="selectPayment('Hong Leong Connect', 'Hong Leong Bank (Online Banking / DuitNow)', 'hongleong.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/hongleong.png" alt="Hong Leong"
+                                class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">Hong Leong Connect</span>
                         </div>
 
                         <!-- Header: E-Wallet -->
-                        <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-400 bg-slate-950 uppercase tracking-wider">E-Wallet</div>
-                        <div onclick="selectPayment('Touch \'n Go eWallet', 'Touch \'n Go eWallet', 'tng.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/tng.png" alt="TnG eWallet" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div
+                            class="px-3 py-1.5 text-[11px] font-semibold text-slate-400 bg-slate-950 uppercase tracking-wider">
+                            E-Wallet</div>
+                        <div onclick="selectPayment('Touch \'n Go eWallet', 'Touch \'n Go eWallet', 'tng.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/tng.png" alt="TnG eWallet"
+                                class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">Touch 'n Go eWallet</span>
                         </div>
-                        <div onclick="selectPayment('DuitNow', 'DuitNow', 'duitnow.png')" class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
-                            <img src="image/duitnow.png" alt="DuitNow" class="w-6 h-6 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/24'">
+                        <div onclick="selectPayment('DuitNow', 'DuitNow', 'duitnow.png')"
+                            class="flex items-center space-x-3 px-3 py-2.5 hover:bg-slate-800 cursor-pointer transition">
+                            <img src="image/duitnow.png" alt="DuitNow"
+                                class="w-6 h-6 object-contain rounded bg-white p-0.5"
+                                onerror="this.src='https://via.placeholder.com/24'">
                             <span class="text-sm text-white">DuitNow</span>
                         </div>
                     </div>
@@ -188,23 +251,29 @@
     </main>
 
     <!-- Sticky Bottom Bar -->
-    <div class="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur border-t border-slate-700 p-4 z-20 shadow-2xl">
+    <div
+        class="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur border-t border-slate-700 p-4 z-20 shadow-2xl">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div>
                 <p class="text-xs text-slate-400">Total Amount</p>
                 <p id="totalPrice" class="text-xl font-bold text-emerald-400">RM0.00</p>
             </div>
-            <button onclick="triggerCheckout()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl text-sm transition shadow-lg active:scale-95">
+            <button onclick="triggerCheckout()"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl text-sm transition shadow-lg active:scale-95">
                 Place Order
             </button>
         </div>
     </div>
 
     <!-- Product Detail Modal -->
-    <div id="productModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeProductModal()">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 relative space-y-4 shadow-2xl" onclick="event.stopPropagation()">
-            <button onclick="closeProductModal()" class="sticky top-0 float-right text-slate-400 hover:text-white bg-slate-700/80 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold transition z-10">✕</button>
-            
+    <div id="productModal"
+        class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden"
+        onclick="closeProductModal()">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 relative space-y-4 shadow-2xl"
+            onclick="event.stopPropagation()">
+            <button onclick="closeProductModal()"
+                class="sticky top-0 float-right text-slate-400 hover:text-white bg-slate-700/80 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold transition z-10">✕</button>
+
             <div id="modalContent" class="space-y-4 clear-both">
                 <!-- Dynamically populated -->
             </div>
@@ -212,17 +281,24 @@
     </div>
 
     <!-- Order Confirmation Modal -->
-    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-14 h-14 bg-emerald-900/60 border border-emerald-500 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">✓</div>
+    <div id="successModal"
+        class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div
+            class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+            <div
+                class="w-14 h-14 bg-emerald-900/60 border border-emerald-500 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                ✓</div>
             <h3 class="text-xl font-bold text-white">Order Successful!</h3>
             <p id="successMessage" class="text-sm text-slate-300 leading-relaxed"></p>
-            <button onclick="closeSuccessModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl text-sm transition">
+            <button onclick="closeSuccessModal()"
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl text-sm transition">
                 Done
             </button>
         </div>
     </div>
 
+    <!-- Include Config File -->
+    <script src="config.js"></script>
     <!-- JavaScript Logic -->
     <script>
         const products = {
@@ -269,19 +345,19 @@
         function selectPayment(displayName, formValue, imgSrc) {
             const btnText = document.getElementById('selectedPaymentText');
             const hiddenInput = document.getElementById('custPayment');
-            
+
             if (imgSrc) {
                 btnText.innerHTML = `<span class="flex items-center space-x-2"><img src="${imgSrc}" class="w-5 h-5 object-contain rounded bg-white p-0.5"><span class="text-white">${displayName}</span></span>`;
             } else {
                 btnText.innerHTML = `<span class="text-white">${displayName}</span>`;
             }
-            
+
             hiddenInput.value = formValue;
             document.getElementById('paymentDropdownList').classList.add('hidden');
         }
 
         // Close dropdown when clicking outside
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             const dropdown = document.getElementById('paymentDropdownList');
             const btn = document.getElementById('paymentDropdownBtn');
             if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
@@ -292,7 +368,7 @@
         function openProductModal(productId) {
             const prod = products[productId];
             const modalContent = document.getElementById('modalContent');
-            
+
             modalContent.innerHTML = `
                 <div class="bg-slate-950 rounded-xl p-3 flex items-center justify-center h-48 border border-slate-700 overflow-hidden">
                     <img src="${prod.imgSrc}" alt="${prod.name}" class="product-image">
@@ -328,8 +404,20 @@
         function triggerCheckout() {
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
+            const refCodeInput = document.getElementById('refCode').value.trim();
             const fulfillment = document.getElementById('custFulfillment').value;
             const payment = document.getElementById('custPayment').value;
+
+            // Validate Referral Code (Case-insensitive check against config.js)
+            const isValidRef = CONFIG.validReferralCodes.some(
+                code => code.toLowerCase() === refCodeInput.toLowerCase()
+            );
+
+            if (!isValidRef) {
+                alert('Invalid referral code. Please enter a valid referral code to proceed.');
+                document.getElementById('refCode').focus();
+                return;
+            }
 
             let totalItems = 0, totalPrice = 0, summaryList = [];
             for (const id in cart) {
@@ -341,10 +429,26 @@
                 }
             }
             if (totalItems === 0) { alert('Please select at least one shuttlecock.'); return; }
-            if (!name || !phone || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
-            
-            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Delivery Type:</strong> ${fulfillment}<br><strong>Payment Option:</strong> ${payment}`;
-            
+            if (!name || !phone || !refCodeInput || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
+
+            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Referral Code:</strong> ${refCodeInput} (Verified)<br><strong>Delivery Type:</strong> ${fulfillment}<br><strong>Payment Option:</strong> ${payment}`;
+
+            // Save order to localStorage for orders.html
+            const newOrder = {
+                name: name,
+                phone: phone,
+                refCode: refCodeInput,
+                fulfillment: fulfillment,
+                payment: payment,
+                items: summaryList,
+                totalPrice: totalPrice,
+                date: new Date().toLocaleString()
+            };
+
+            const existingOrders = JSON.parse(localStorage.getItem('shuttle_orders') || '[]');
+            existingOrders.unshift(newOrder);
+            localStorage.setItem('shuttle_orders', JSON.stringify(existingOrders));
+
             document.getElementById('successMessage').innerHTML = successMsg;
             document.getElementById('successModal').classList.remove('hidden');
         }
@@ -363,4 +467,5 @@
         }
     </script>
 </body>
+
 </html>
