@@ -10,9 +10,9 @@ Currently building a website for a startup. Updates go here
 
 **Product Backlog:**
 
-* Having a website to order shuttlecocks
-* Customers can track submitted orders
-* Prepare a secondary website for management to track sales and orders
-* Having a summary report method to display for stakeholders during meeting
+- Having a website to order shuttlecocks
+- Customers can track submitted orders
+- Prepare a secondary website for management to track sales and orders
+- Having a summary report method to display for stakeholders during meeting
 
 **Main Developer : JonK**
