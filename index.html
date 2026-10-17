@@ -157,18 +157,36 @@
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Referral Code</label>
-                    <input type="text" id="refCode" required placeholder="e.g. JohnDoe"
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Referral Code <span
+                            class="text-slate-500 font-normal">(Optional)</span></label>
+                    <input type="text" id="refCode" oninput="calculateTotal()" placeholder="e.g. JohnDoe"
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Delivery Type</label>
-                    <select id="custFulfillment" required
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-                        <option value="" disabled selected>Select delivery type</option>
-                        <option value="Dropoff Point">Dropoff Point</option>
-                        <option value="Door Delivery">Door Delivery</option>
-                    </select>
+                    <label class="block text-xs font-medium text-slate-300 mb-2">Delivery Type</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Dropoff Point Option -->
+                        <label
+                            class="relative flex items-center justify-between p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/30">
+                            <div class="flex items-center space-x-2.5">
+                                <input type="radio" name="custFulfillment" value="Dropoff Point" required
+                                    class="text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700">
+                                <span class="text-sm font-medium text-white">Dropoff Point</span>
+                            </div>
+                            <span class="text-base">📍</span>
+                        </label>
+
+                        <!-- Door Delivery Option -->
+                        <label
+                            class="relative flex items-center justify-between p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/30">
+                            <div class="flex items-center space-x-2.5">
+                                <input type="radio" name="custFulfillment" value="Door Delivery" required
+                                    class="text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700">
+                                <span class="text-sm font-medium text-white">Door Delivery</span>
+                            </div>
+                            <span class="text-base">🚪</span>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Custom Interactive Payment Option Selector with Images -->
@@ -332,8 +350,33 @@
 
         function calculateTotal() {
             let total = 0;
-            for (const id in cart) total += cart[id] * products[id].price;
-            document.getElementById('totalPrice').innerText = `RM${total.toFixed(2)}`;
+            for (const id in cart) {
+                total += cart[id] * products[id].price;
+            }
+
+            // Check if a valid referral code is currently typed
+            const refCodeInput = document.getElementById('refCode').value.trim();
+            let discount = 0;
+
+            if (refCodeInput !== "" && typeof CONFIG !== 'undefined') {
+                const isRefValid = CONFIG.validReferralCodes.some(
+                    code => code.toLowerCase() === refCodeInput.toLowerCase()
+                );
+
+                // If valid and P02 is in the cart, apply RM2 discount per P02 tube
+                if (isRefValid && cart['P02'] > 0) {
+                    discount = cart['P02'] * CONFIG.discountPerP02;
+                    total -= discount;
+                }
+            }
+
+            // Optional: Update display to show discount notice if applied
+            const totalPriceEl = document.getElementById('totalPrice');
+            if (discount > 0) {
+                totalPriceEl.innerHTML = `RM${total.toFixed(2)} <span class="text-xs text-emerald-400 font-normal">(Includes RM${discount.toFixed(2)} Ref Discount)</span>`;
+            } else {
+                totalPriceEl.innerText = `RM${total.toFixed(2)}`;
+            }
         }
 
         // Custom Dropdown Toggle & Selection Logic
@@ -347,14 +390,16 @@
             const hiddenInput = document.getElementById('custPayment');
 
             if (imgSrc) {
-                btnText.innerHTML = `<span class="flex items-center space-x-2"><img src="${imgSrc}" class="w-5 h-5 object-contain rounded bg-white p-0.5"><span class="text-white">${displayName}</span></span>`;
+                // Automatically ensure the 'image/' folder path is included
+                const fullImgPath = imgSrc.startsWith('image/') ? imgSrc : 'image/' + imgSrc;
+                btnText.innerHTML = `<span class="flex items-center space-x-2"><img src="${fullImgPath}" class="w-5 h-5 object-contain rounded bg-white p-0.5" onerror="this.src='https://via.placeholder.com/20'"><span class="text-white">${displayName}</span></span>`;
             } else {
                 btnText.innerHTML = `<span class="text-white">${displayName}</span>`;
             }
 
             hiddenInput.value = formValue;
             document.getElementById('paymentDropdownList').classList.add('hidden');
-        }
+        } s
 
         // Close dropdown when clicking outside
         window.addEventListener('click', function (e) {
@@ -405,18 +450,23 @@
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
             const refCodeInput = document.getElementById('refCode').value.trim();
-            const fulfillment = document.getElementById('custFulfillment').value;
+            const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
+            const fulfillment = fulfillmentEl ? fulfillmentEl.value : '';
             const payment = document.getElementById('custPayment').value;
 
-            // Validate Referral Code (Case-insensitive check against config.js)
-            const isValidRef = CONFIG.validReferralCodes.some(
-                code => code.toLowerCase() === refCodeInput.toLowerCase()
-            );
+            let discountAmount = 0;
+            let isRefValid = false;
 
-            if (!isValidRef) {
-                alert('Invalid referral code. Please enter a valid referral code to proceed.');
-                document.getElementById('refCode').focus();
-                return;
+            if (refCodeInput !== "") {
+                isRefValid = CONFIG.validReferralCodes.some(
+                    code => code.toLowerCase() === refCodeInput.toLowerCase()
+                );
+
+                if (!isRefValid) {
+                    alert('Invalid referral code. You can leave it blank or enter a valid code.');
+                    document.getElementById('refCode').focus();
+                    return;
+                }
             }
 
             let totalItems = 0, totalPrice = 0, summaryList = [];
@@ -428,20 +478,27 @@
                     summaryList.push(`${cart[id]}x ${products[id].name} (RM${itemTotal.toFixed(2)})`);
                 }
             }
+
             if (totalItems === 0) { alert('Please select at least one shuttlecock.'); return; }
-            if (!name || !phone || !refCodeInput || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
+            if (!name || !phone || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
 
-            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Referral Code:</strong> ${refCodeInput} (Verified)<br><strong>Delivery Type:</strong> ${fulfillment}<br><strong>Payment Option:</strong> ${payment}`;
+            if (isRefValid && cart['P02'] > 0) {
+                discountAmount = cart['P02'] * CONFIG.discountPerP02;
+                totalPrice -= discountAmount;
+                summaryList.push(`<span class="text-emerald-400">Referral Discount (-RM${discountAmount.toFixed(2)})</span>`);
+            }
 
-            // Save order to localStorage for orders.html
+            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Referral Code:</strong> ${refCodeInput ? refCodeInput + ' (Applied)' : 'None'}<br><strong>Delivery Type:</strong> ${fulfillment}<br><strong>Payment Option:</strong> ${payment}`;
+
             const newOrder = {
                 name: name,
                 phone: phone,
-                refCode: refCodeInput,
+                refCode: refCodeInput || 'None',
                 fulfillment: fulfillment,
                 payment: payment,
                 items: summaryList,
                 totalPrice: totalPrice,
+                discountApplied: discountAmount,
                 date: new Date().toLocaleString()
             };
 
@@ -452,7 +509,6 @@
             document.getElementById('successMessage').innerHTML = successMsg;
             document.getElementById('successModal').classList.remove('hidden');
         }
-
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
             cart['P01'] = 0; cart['P02'] = 0;
