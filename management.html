@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="This is for the management page. Here you can find information about our team, 
+    our mission, and how we operate. We are committed to providing the best service and support to our clients. 
+    Please feel free to reach out to us with any questions or concerns.">
+    <title>Shuttle Store - Management Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-16 font-sans">
+
+    <!-- Password Prompt Overlay -->
+    <div id="authOverlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
+            <div class="text-3xl">🔒</div>
+            <h3 class="text-lg font-bold text-white">Stakeholder Access Only</h3>
+            <p class="text-xs text-slate-400">Enter the management passcode to view stakeholder controls and system dashboard.</p>
+            <input type="password" id="passcodeInput" placeholder="Enter passcode" 
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 text-center">
+            <button onclick="verifyPasscode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-sm transition">
+                Authenticate
+            </button>
+            <p id="authError" class="text-xs text-red-400 hidden">Incorrect passcode. Access denied.</p>
+        </div>
+    </div>
+
+    <!-- Management Dashboard Header -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">⚙️</span>
+                <h1 class="text-xl font-bold tracking-wide text-emerald-400">Management & Financial Dashboard</h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <a href="index.html" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-2 rounded-lg font-medium transition">
+                    ← Storefront
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Financial Overview Dashboard -->
+        <section class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-400 mb-1">Gross Revenue</p>
+                <p id="dashRevenue" class="text-xl font-bold text-emerald-400">RM0.00</p>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-400 mb-1">Total Supplier Bills</p>
+                <p id="dashExpenses" class="text-xl font-bold text-red-400">RM0.00</p>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-400 mb-1">Estimated Net Profit</p>
+                <p id="dashProfit" class="text-xl font-bold text-cyan-400">RM0.00</p>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-400 mb-1">Total Orders / Referrals</p>
+                <p id="dashOrderCount" class="text-xl font-bold text-white">0</p>
+            </div>
+        </section>
+
+        <!-- Two Column Layout: Supplier Bills & Salesperson Referrals -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Supplier Bills Section -->
+            <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-sm">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h2 class="font-bold text-white flex items-center space-x-2"><span>📄</span> <span>Supplier Bills / Invoices</span></h2>
+                    <button onclick="openBillModal()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg font-medium transition">+ Add Bill</button>
+                </div>
+                <div id="supplierBillsContainer" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+            <!-- Salesperson Referral Contributions Section -->
+            <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-sm">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <h2 class="font-bold text-white flex items-center space-x-2"><span>🏷️</span> <span>Salesperson Referrals</span></h2>
+                    <span class="text-xs text-slate-400">Commission & Performance</span>
+                </div>
+                <div id="referralsContainer" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                    <!-- Dynamically populated -->
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Customer Orders List -->
+        <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h2 class="font-bold text-white flex items-center space-x-2"><span>📦</span> <span>Submitted Orders Database</span></h2>
+                <button onclick="clearAllOrders()" class="text-xs bg-red-900/60 hover:bg-red-900 text-red-300 border border-red-700 px-2.5 py-1.5 rounded transition">Clear Orders</button>
+            </div>
+            <div id="managementOrdersContainer" class="space-y-3">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Add Supplier Bill Modal -->
+    <div id="billModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-white">Record Supplier Bill</h3>
+                <button onclick="closeBillModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+            </div>
+            <form id="billForm" onsubmit="saveBill(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Supplier Name</label>
+                    <input type="text" id="billSupplier" required placeholder="e.g. RSL Malaysia Distributor" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Invoice / Reference No.</label>
+                    <input type="text" id="billRef" required placeholder="e.g. INV-9821" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Total Bill Amount (RM)</label>
+                    <input type="number" step="0.01" id="billAmount" required placeholder="0.00" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-sm transition">
+                    Save Bill
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const MANAGEMENT_PASSCODE = "shuttle2026";
+
+        function verifyPasscode() {
+            const input = document.getElementById('passcodeInput').value;
+            const errorText = document.getElementById('authError');
+
+            if (input === MANAGEMENT_PASSCODE) {
+                document.getElementById('authOverlay').classList.add('hidden');
+                loadManagementDashboard();
+            } else {
+                errorText.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('passcodeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') verifyPasscode();
+        });
+
+        function openBillModal() { document.getElementById('billModal').classList.remove('hidden'); }
+        function closeBillModal() { document.getElementById('billModal').classList.add('hidden'); }
+
+        function saveBill(e) {
+            e.preventDefault();
+            const supplier = document.getElementById('billSupplier').value.trim();
+            const ref = document.getElementById('billRef').value.trim();
+            const amount = parseFloat(document.getElementById('billAmount').value);
+
+            let bills = JSON.parse(localStorage.getItem('shuttle_supplier_bills') || '[]');
+            bills.unshift({ supplier, ref, amount, date: new Date().toLocaleDateString() });
+            localStorage.setItem('shuttle_supplier_bills', JSON.stringify(bills));
+
+            document.getElementById('billForm').reset();
+            closeBillModal();
+            loadManagementDashboard();
+        }
+
+        function deleteBill(index) {
+            let bills = JSON.parse(localStorage.getItem('shuttle_supplier_bills') || '[]');
+            bills.splice(index, 1);
+            localStorage.setItem('shuttle_supplier_bills', JSON.stringify(bills));
+            loadManagementDashboard();
+        }
+
+        function loadManagementDashboard() {
+            const orders = JSON.parse(localStorage.getItem('shuttle_orders') || '[]');
+            const bills = JSON.parse(localStorage.getItem('shuttle_supplier_bills') || '[]');
+
+            // 1. Dashboard Metrics Calculations
+            const totalRevenue = orders.reduce((sum, o) => sum + o.totalPrice, 0);
+            const totalExpenses = bills.reduce((sum, b) => sum + b.amount, 0);
+            const netProfit = totalRevenue - totalExpenses;
+
+            document.getElementById('dashRevenue').innerText = `RM${totalRevenue.toFixed(2)}`;
+            document.getElementById('dashExpenses').innerText = `RM${totalExpenses.toFixed(2)}`;
+            document.getElementById('dashProfit').innerText = `RM${netProfit.toFixed(2)}`;
+            document.getElementById('dashOrderCount').innerText = orders.length;
+
+            // 2. Render Supplier Bills
+            const billsContainer = document.getElementById('supplierBillsContainer');
+            if (bills.length === 0) {
+                billsContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No supplier bills recorded yet.</p>`;
+            } else {
+                billsContainer.innerHTML = bills.map((b, i) => `
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-bold text-white">${b.supplier} <span class="text-slate-400 font-normal">(${b.ref})</span></p>
+                            <p class="text-slate-400">${b.date}</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-red-400 font-bold">RM${b.amount.toFixed(2)}</span>
+                            <button onclick="deleteBill(${i})" class="text-slate-500 hover:text-red-400">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 3. Render Salesperson Referrals (Grouping by referral code if assigned, or simulating breakdown)
+            const referralsContainer = document.getElementById('referralsContainer');
+            // Grouping orders by referral code (assuming order object can capture code or default to "NO CODE")
+            let referralMap = {};
+            orders.forEach(o => {
+                let code = o.referralCode || 'NO CODE';
+                if (!referralMap[code]) referralMap[code] = { count: 0, total: 0 };
+                referralMap[code].count += 1;
+                referralMap[code].total += o.totalPrice;
+            });
+
+            if (Object.keys(referralMap).length === 0 || (Object.keys(referralMap).length === 1 && referralMap['NO CODE'].count === 0)) {
+                referralsContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No referral sales logged yet.</p>`;
+            } else {
+                referralsContainer.innerHTML = Object.keys(referralMap).map(code => `
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-bold text-emerald-400">Code: ${code}</p>
+                            <p class="text-slate-400">${referralMap[code].count} order(s) attributed</p>
+                        </div>
+                        <span class="text-white font-bold">RM${referralMap[code].total.toFixed(2)}</span>
+                    </div>
+                `).join('');
+            }
+
+            // 4. Render Orders
+            const ordersContainer = document.getElementById('managementOrdersContainer');
+            if (orders.length === 0) {
+                ordersContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No customer orders found.</p>`;
+                return;
+            }
+
+            ordersContainer.innerHTML = orders.map((order, index) => `
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 space-y-2 text-xs">
+                    <div class="flex justify-between items-start border-b border-slate-800 pb-2">
+                        <div>
+                            <span class="font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">${order.id}</span>
+                            <span class="text-white font-bold ml-2">${order.name}</span> <span class="text-slate-400">(${order.phone})</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-emerald-400 font-bold">RM${order.totalPrice.toFixed(2)}</span>
+                            <button onclick="deleteOrder(${index})" class="text-slate-500 hover:text-red-400 font-bold">✕</button>
+                        </div>
+                    </div>
+                    <div class="text-slate-300">
+                        ${order.items.map(item => `<div>• ${item.qty}x ${item.name} (RM${item.price.toFixed(2)})</div>`).join('')}
+                    </div>
+                    <div class="text-slate-400 flex justify-between pt-1">
+                        <span>Fulfillment: ${order.fulfillment} | Payment: ${order.payment}</span>
+                        <span>${order.date}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteOrder(index) {
+            if (confirm('Delete this order record?')) {
+                let orders = JSON.parse(localStorage.getItem('shuttle_orders') || '[]');
+                orders.splice(index, 1);
+                localStorage.setItem('shuttle_orders', JSON.stringify(orders));
+                loadManagementDashboard();
+            }
+        }
+
+        function clearAllOrders() {
+            if (confirm('Clear all customer orders?')) {
+                localStorage.removeItem('shuttle_orders');
+                loadManagementDashboard();
+            }
+        }
+    </script>
+</body>
+</html>
