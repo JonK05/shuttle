@@ -94,8 +94,9 @@
                             <span
                                 class="text-xs font-semibold bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">P01</span>
                         </div>
-                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">High-end, full-cork Grade A Goose Feather Shaft with
-                             Durable, Stable Flight for Professional Club Training and Tournament Play.
+                        <p class="text-slate-400 text-xs line-clamp-2 mb-3">High-end, full-cork Grade A Goose Feather
+                            Shaft with
+                            Durable, Stable Flight for Professional Club Training and Tournament Play.
                         </p>
                     </div>
                     <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 mt-auto">
@@ -171,6 +172,7 @@
                             class="relative flex items-center justify-between p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/30">
                             <div class="flex items-center space-x-2.5">
                                 <input type="radio" name="custFulfillment" value="Dropoff Point" required
+                                    onchange="toggleAddressField()"
                                     class="text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700">
                                 <span class="text-sm font-medium text-white">Dropoff Point</span>
                             </div>
@@ -182,12 +184,21 @@
                             class="relative flex items-center justify-between p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/30">
                             <div class="flex items-center space-x-2.5">
                                 <input type="radio" name="custFulfillment" value="Door Delivery" required
+                                    onchange="toggleAddressField(), calculateTotal()"
                                     class="text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700">
                                 <span class="text-sm font-medium text-white">Door Delivery</span>
                             </div>
                             <span class="text-base">🚪</span>
                         </label>
                     </div>
+                </div>
+
+                <!--Fill in delivery address -->
+                <div id="addressContainer" class="hidden mt-3">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Delivery Address <span
+                            class="text-rose-400">*</span></label>
+                    <textarea id="custAddress" rows="2" placeholder="Enter your full street address, unit number, etc."
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 resize-none"></textarea>
                 </div>
 
                 <!-- Custom Interactive Payment Option Selector with Images -->
@@ -349,6 +360,21 @@
             calculateTotal();
         }
 
+        function toggleAddressField() {
+            const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
+            const addressContainer = document.getElementById('addressContainer');
+            const addressInput = document.getElementById('custAddress');
+
+            if (fulfillmentEl && fulfillmentEl.value === 'Door Delivery') {
+                addressContainer.classList.remove('hidden');
+                addressInput.required = true; // Make address mandatory if Door Delivery is chosen
+            } else {
+                addressContainer.classList.add('hidden');
+                addressInput.required = false;
+                addressInput.value = ''; // Clear address if switched back to dropoff
+            }
+        }
+
         function calculateTotal() {
             let total = 0;
             for (const id in cart) {
@@ -358,6 +384,14 @@
             // Check if a valid referral code is currently typed
             const refCodeInput = document.getElementById('refCode').value.trim();
             let discount = 0;
+
+            // Check if Door Delivery is selected to add RM5 fee
+            const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
+            let deliveryFee = 0;
+            if (fulfillmentEl && fulfillmentEl.value === 'Door Delivery') {
+                deliveryFee = 5.00;
+                total += deliveryFee;
+            }
 
             if (refCodeInput !== "" && typeof CONFIG !== 'undefined') {
                 const isRefValid = CONFIG.validReferralCodes.some(
@@ -400,7 +434,7 @@
 
             hiddenInput.value = formValue;
             document.getElementById('paymentDropdownList').classList.add('hidden');
-        } 
+        }
 
         // Close dropdown when clicking outside
         window.addEventListener('click', function (e) {
@@ -446,29 +480,13 @@
         function closeProductModal() {
             document.getElementById('productModal').classList.add('hidden');
         }
-
         function triggerCheckout() {
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
-            const refCodeInput = document.getElementById('refCode').value.trim();
             const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
             const fulfillment = fulfillmentEl ? fulfillmentEl.value : '';
+            const address = document.getElementById('custAddress').value.trim();
             const payment = document.getElementById('custPayment').value;
-
-            let discountAmount = 0;
-            let isRefValid = false;
-
-            if (refCodeInput !== "") {
-                isRefValid = CONFIG.validReferralCodes.some(
-                    code => code.toLowerCase() === refCodeInput.toLowerCase()
-                );
-
-                if (!isRefValid) {
-                    alert('Invalid referral code. You can leave it blank or enter a valid code.');
-                    document.getElementById('refCode').focus();
-                    return;
-                }
-            }
 
             let totalItems = 0, totalPrice = 0, summaryList = [];
             for (const id in cart) {
@@ -482,24 +500,32 @@
 
             if (totalItems === 0) { alert('Please select at least one shuttlecock.'); return; }
             if (!name || !phone || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
-
-            if (isRefValid && cart['P02'] > 0) {
-                discountAmount = cart['P02'] * CONFIG.discountPerP02;
-                totalPrice -= discountAmount;
-                summaryList.push(`<span class="text-emerald-400">Referral Discount (-RM${discountAmount.toFixed(2)})</span>`);
+            if (fulfillment === 'Door Delivery' && !address) {
+                alert('Please enter your delivery address.');
+                document.getElementById('custAddress').focus();
+                return;
             }
 
-            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Referral Code:</strong> ${refCodeInput ? refCodeInput + ' (Applied)' : 'None'}<br><strong>Delivery Type:</strong> ${fulfillment}<br><strong>Payment Option:</strong> ${payment}`;
+            let deliveryFee = 0;
+            let fulfillmentDetails = fulfillment;
+            if (fulfillment === 'Door Delivery') {
+                deliveryFee = 5.00;
+                totalPrice += deliveryFee;
+                summaryList.push(`<span class="text-emerald-400">Door Delivery Fee (RM5.00)</span>`);
+                fulfillmentDetails += `<br><strong>Address:</strong> ${address}`;
+            }
+
+            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Delivery Type:</strong> ${fulfillmentDetails}<br><strong>Payment Option:</strong> ${payment}`;
 
             const newOrder = {
                 name: name,
                 phone: phone,
-                refCode: refCodeInput || 'None',
                 fulfillment: fulfillment,
+                address: fulfillment === 'Door Delivery' ? address : 'N/A',
                 payment: payment,
                 items: summaryList,
                 totalPrice: totalPrice,
-                discountApplied: discountAmount,
+                deliveryFee: deliveryFee,
                 date: new Date().toLocaleString()
             };
 
@@ -510,6 +536,7 @@
             document.getElementById('successMessage').innerHTML = successMsg;
             document.getElementById('successModal').classList.remove('hidden');
         }
+
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
             cart['P01'] = 0; cart['P02'] = 0;
@@ -517,6 +544,7 @@
             document.getElementById('qty-P02').innerText = '0';
             calculateTotal();
             document.getElementById('orderForm').reset();
+            document.getElementById('addressContainer').classList.add('hidden'); // Hide address box again
             const selectedPaymentText = document.getElementById('selectedPaymentText');
             selectedPaymentText.innerText = 'Select payment option';
             selectedPaymentText.className = 'text-slate-400';
