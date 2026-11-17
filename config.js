@@ -5,7 +5,7 @@ const CONFIG = {
         if (stored) {
             return JSON.parse(stored);
         }
-        return ["JohnDoe", "ShuttlePro2026", "BadmintonKing", "UTARStaff", "SmashFest"];
+        return ["ShuttlePro2026", "BadmintonKing", "UTARStaff", "SmashFest"];
     },
-    discountPerP02: 2.00 // RM2 discount per P02 ordered if valid referral code is used
+    discountPerTube: 2.00 // RM2 discount per tube ordered if valid referral code is used
 };

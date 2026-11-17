@@ -31,10 +31,6 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            /* Keeps aspect ratio, doesn't stretch */
-            mix-blend-mode: luminosity;
-            /* Optional: gives them a cool monochrome look matching the theme */
-            opacity: 0.8;
         }
 
         .product-image:hover {
@@ -381,10 +377,6 @@
                 total += cart[id] * products[id].price;
             }
 
-            // Check if a valid referral code is currently typed
-            const refCodeInput = document.getElementById('refCode').value.trim();
-            let discount = 0;
-
             // Check if Door Delivery is selected to add RM5 fee
             const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
             let deliveryFee = 0;
@@ -393,27 +385,36 @@
                 total += deliveryFee;
             }
 
-            if (refCodeInput !== "" && typeof CONFIG !== 'undefined') {
+            // Get referral code input
+            const refCodeInput = document.getElementById('refCode').value.trim();
+            let discount = 0;
+
+            // STRICT CHECK: Only apply discount if input is NOT empty AND matches a valid code
+            if (refCodeInput !== "" && typeof CONFIG !== 'undefined' && CONFIG.validReferralCodes) {
                 const isRefValid = CONFIG.validReferralCodes.some(
                     code => code.toLowerCase() === refCodeInput.toLowerCase()
                 );
 
-                // If valid and P02 is in the cart, apply RM2 discount per P02 tube
-                if (isRefValid && cart['P02'] > 0) {
-                    discount = cart['P02'] * CONFIG.discountPerP02;
-                    total -= discount;
+                if (isRefValid) {
+                    let totalDiscountQty = cart['P01'] + cart['P02'];
+                    if (totalDiscountQty > 0) {
+                        discount = totalDiscountQty * CONFIG.discountPerP02;
+                        total -= discount;
+                    }
                 }
             }
 
-            // Optional: Update display to show discount notice if applied
             const totalPriceEl = document.getElementById('totalPrice');
-            if (discount > 0) {
-                totalPriceEl.innerHTML = `RM${total.toFixed(2)} <span class="text-xs text-emerald-400 font-normal">(Includes RM${discount.toFixed(2)} Ref Discount)</span>`;
+            let noticeText = [];
+            if (deliveryFee > 0) noticeText.push(`Incl. RM5.00 Delivery`);
+            if (discount > 0) noticeText.push(`RM${discount.toFixed(2)} Ref Discount`);
+
+            if (noticeText.length > 0) {
+                totalPriceEl.innerHTML = `RM${total.toFixed(2)} <span class="text-xs text-emerald-400 font-normal">(${noticeText.join(' | ')})</span>`;
             } else {
                 totalPriceEl.innerText = `RM${total.toFixed(2)}`;
             }
         }
-
         // Custom Dropdown Toggle & Selection Logic
         function togglePaymentDropdown() {
             const list = document.getElementById('paymentDropdownList');
@@ -480,9 +481,11 @@
         function closeProductModal() {
             document.getElementById('productModal').classList.add('hidden');
         }
+
         function triggerCheckout() {
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
+            const refCodeInput = document.getElementById('refCode').value.trim();
             const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
             const fulfillment = fulfillmentEl ? fulfillmentEl.value : '';
             const address = document.getElementById('custAddress').value.trim();
@@ -506,6 +509,30 @@
                 return;
             }
 
+            let discountAmount = 0;
+            let appliedRefCode = 'None';
+
+            // Only validate and apply discount if the user actually typed something into the referral box
+            if (refCodeInput !== "") {
+                const isRefValid = CONFIG.validReferralCodes.some(
+                    code => code.toLowerCase() === refCodeInput.toLowerCase()
+                );
+
+                if (!isRefValid) {
+                    alert('Invalid referral code. Please clear it or enter a valid code.');
+                    document.getElementById('refCode').focus();
+                    return;
+                }
+
+                appliedRefCode = refCodeInput + ' (Applied)';
+                let totalDiscountQty = cart['P01'] + cart['P02'];
+                if (totalDiscountQty > 0) {
+                    discountAmount = totalDiscountQty * CONFIG.discountPerP02;
+                    totalPrice -= discountAmount;
+                    summaryList.push(`<span class="text-emerald-400">Referral Discount (-RM${discountAmount.toFixed(2)})</span>`);
+                }
+            }
+
             let deliveryFee = 0;
             let fulfillmentDetails = fulfillment;
             if (fulfillment === 'Door Delivery') {
@@ -515,16 +542,18 @@
                 fulfillmentDetails += `<br><strong>Address:</strong> ${address}`;
             }
 
-            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Delivery Type:</strong> ${fulfillmentDetails}<br><strong>Payment Option:</strong> ${payment}`;
+            const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Referral Code:</strong> ${appliedRefCode}<br><strong>Delivery Type:</strong> ${fulfillmentDetails}<br><strong>Payment Option:</strong> ${payment}`;
 
             const newOrder = {
                 name: name,
                 phone: phone,
+                refCode: refCodeInput || 'None',
                 fulfillment: fulfillment,
                 address: fulfillment === 'Door Delivery' ? address : 'N/A',
                 payment: payment,
                 items: summaryList,
                 totalPrice: totalPrice,
+                discountApplied: discountAmount,
                 deliveryFee: deliveryFee,
                 date: new Date().toLocaleString()
             };
