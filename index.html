@@ -168,7 +168,7 @@
                             class="relative flex items-center justify-between p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/30">
                             <div class="flex items-center space-x-2.5">
                                 <input type="radio" name="custFulfillment" value="Dropoff Point" required
-                                    onchange="toggleAddressField()"
+                                    onchange="toggleFulfillmentFields()"
                                     class="text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700">
                                 <span class="text-sm font-medium text-white">Dropoff Point</span>
                             </div>
@@ -189,6 +189,30 @@
                     </div>
                 </div>
 
+                <!-- Dropoff Location Container (Shows only for Dropoff Point) -->
+                <div id="dropoffContainer" class="hidden space-y-3 mt-3">
+                    <!-- City Selection Div -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Select City <span
+                                class="text-rose-400">*</span></label>
+                        <select id="dropoffCity" onchange="updateDropoffPoints()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <option value="">-- Choose City --</option>
+                            <option value="Tawau">Tawau</option>
+                            <option value="Kota Kinabalu">Kota Kinabalu</option>
+                            <option value="Sandakan">Sandakan</option>
+                        </select>
+                    </div>
+
+                    <!-- Specific Dropoff Point Radio Group Container (Hidden until city is selected) -->
+                    <div id="pointContainer" class="hidden space-y-2">
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Select Dropoff Point <span
+                                class="text-rose-400">*</span></label>
+                        <div id="dropoffPointsList" class="space-y-2">
+                            <!-- Dynamically populated radio buttons will appear here -->
+                        </div>
+                    </div>
+                </div>
                 <!--Fill in delivery address -->
                 <div id="addressContainer" class="hidden mt-3">
                     <label class="block text-xs font-medium text-slate-300 mb-1">Delivery Address <span
@@ -348,12 +372,71 @@
 
         const cart = { 'P01': 0, 'P02': 0 };
 
+        // Define available dropoff points per city
+        const dropoffLocations = {
+            "Tawau": ["Smash Shuttle - No 5, Lot A5, Ground Floor, Kubota Sentral, Lorong Kubota Sentral 2, Jln Datuk Chong Thien Vun KM5, 91000 Tawau (Contact: 010-9007908, Mr. Chia)",
+                "Tawau Fuji Park Recreation Club (Dewan Fuji Park) - TB3399, Jalan Sin Onn, Taman Fuji, Tawau, Sabah (Contact: 011-37283250, En. Azis)"
+            ],
+            "Kota Kinabalu": ["Suria Sabah", "Imago", "Centre Point"],
+            "Sandakan": ["Buli Sim-Sim", "Fung Lim", "IJM Sandakan"]
+        };
+
         function updateQty(productId, change) {
             cart[productId] = Math.max(0, cart[productId] + change);
             document.getElementById(`qty-${productId}`).innerText = cart[productId];
             const modalQty = document.getElementById(`modal-qty-${productId}`);
             if (modalQty) modalQty.innerText = cart[productId];
             calculateTotal();
+        }
+
+        function updateDropoffPoints() {
+            const citySelect = document.getElementById('dropoffCity').value;
+            const pointContainer = document.getElementById('pointContainer');
+            const pointsList = document.getElementById('dropoffPointsList');
+
+            pointsList.innerHTML = '';
+
+            if (citySelect && dropoffLocations[citySelect]) {
+                pointContainer.classList.remove('hidden');
+                dropoffLocations[citySelect].forEach((point, index) => {
+                    const radioHtml = `
+                <label class="relative flex items-start p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-950/30">
+                    <div class="flex items-start space-x-2.5 w-full">
+                        <input type="radio" name="dropoffPointRadio" value="${point}" required
+                            class="mt-0.5 text-emerald-600 focus:ring-emerald-500 bg-slate-900 border-slate-700">
+                        <span class="text-xs sm:text-sm font-medium text-white leading-relaxed">${point}</span>
+                    </div>
+                </label>
+            `;
+                    pointsList.insertAdjacentHTML('beforeend', radioHtml);
+                });
+            } else {
+                pointContainer.classList.add('hidden');
+            }
+        }
+
+        function toggleFulfillmentFields() {
+            const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
+            const dropoffContainer = document.getElementById('dropoffContainer');
+            const addressContainer = document.getElementById('addressContainer');
+            const addressInput = document.getElementById('custAddress');
+            const citySelect = document.getElementById('dropoffCity');
+            const pointContainer = document.getElementById('pointContainer');
+            const pointsList = document.getElementById('dropoffPointsList');
+
+            if (fulfillmentEl && fulfillmentEl.value === 'Dropoff Point') {
+                dropoffContainer.classList.remove('hidden');
+                addressContainer.classList.add('hidden');
+                addressInput.required = false;
+                addressInput.value = '';
+            } else if (fulfillmentEl && fulfillmentEl.value === 'Door Delivery') {
+                addressContainer.classList.remove('hidden');
+                dropoffContainer.classList.add('hidden');
+                addressInput.required = true;
+                citySelect.value = '';
+                pointsList.innerHTML = '';
+                pointContainer.classList.add('hidden');
+            }
         }
 
         function toggleAddressField() {
@@ -488,6 +571,12 @@
             const refCodeInput = document.getElementById('refCode').value.trim();
             const fulfillmentEl = document.querySelector('input[name="custFulfillment"]:checked');
             const fulfillment = fulfillmentEl ? fulfillmentEl.value : '';
+            const city = document.getElementById('dropoffCity').value;
+
+            // Get selected dropoff point radio value instead of select element
+            const pointRadio = document.querySelector('input[name="dropoffPointRadio"]:checked');
+            const point = pointRadio ? pointRadio.value : '';
+
             const address = document.getElementById('custAddress').value.trim();
             const payment = document.getElementById('custPayment').value;
 
@@ -503,16 +592,24 @@
 
             if (totalItems === 0) { alert('Please select at least one shuttlecock.'); return; }
             if (!name || !phone || !fulfillment || !payment) { document.getElementById('orderForm').reportValidity(); return; }
-            if (fulfillment === 'Door Delivery' && !address) {
-                alert('Please enter your delivery address.');
-                document.getElementById('custAddress').focus();
-                return;
+
+            // Validation for Dropoff vs Door Delivery
+            if (fulfillment === 'Dropoff Point') {
+                if (!city || !point) {
+                    alert('Please select both your city and dropoff point.');
+                    return;
+                }
+            } else if (fulfillment === 'Door Delivery') {
+                if (!address) {
+                    alert('Please enter your delivery address.');
+                    document.getElementById('custAddress').focus();
+                    return;
+                }
             }
 
             let discountAmount = 0;
             let appliedRefCode = 'None';
 
-            // Only validate and apply discount if the user actually typed something into the referral box
             if (refCodeInput !== "") {
                 const isRefValid = CONFIG.validReferralCodes.some(
                     code => code.toLowerCase() === refCodeInput.toLowerCase()
@@ -540,6 +637,8 @@
                 totalPrice += deliveryFee;
                 summaryList.push(`<span class="text-emerald-400">Door Delivery Fee (RM5.00)</span>`);
                 fulfillmentDetails += `<br><strong>Address:</strong> ${address}`;
+            } else {
+                fulfillmentDetails += `<br><strong>City:</strong> ${city}<br><strong>Location:</strong> ${point}`;
             }
 
             const successMsg = `Thank you, <strong>${name}</strong>!<br><br>Your order of <strong>${totalItems} tube(s)</strong> totaling <strong>RM${totalPrice.toFixed(2)}</strong> has been placed successfully.<br><br><strong>Items:</strong><br>${summaryList.join('<br>')}<br><br><strong>Referral Code:</strong> ${appliedRefCode}<br><strong>Delivery Type:</strong> ${fulfillmentDetails}<br><strong>Payment Option:</strong> ${payment}`;
@@ -549,7 +648,7 @@
                 phone: phone,
                 refCode: refCodeInput || 'None',
                 fulfillment: fulfillment,
-                address: fulfillment === 'Door Delivery' ? address : 'N/A',
+                fulfillmentDetail: fulfillment === 'Door Delivery' ? address : `${point} (${city})`,
                 payment: payment,
                 items: summaryList,
                 totalPrice: totalPrice,
@@ -573,7 +672,10 @@
             document.getElementById('qty-P02').innerText = '0';
             calculateTotal();
             document.getElementById('orderForm').reset();
-            document.getElementById('addressContainer').classList.add('hidden'); // Hide address box again
+            document.getElementById('dropoffContainer').classList.add('hidden');
+            document.getElementById('pointContainer').classList.add('hidden');
+            document.getElementById('addressContainer').classList.add('hidden');
+            document.getElementById('dropoffPointsList').innerHTML = '';
             const selectedPaymentText = document.getElementById('selectedPaymentText');
             selectedPaymentText.innerText = 'Select payment option';
             selectedPaymentText.className = 'text-slate-400';
